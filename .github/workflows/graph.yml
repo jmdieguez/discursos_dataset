@@ -1,0 +1,32 @@
+name: Generate graphs
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade scrapy twisted pyopenssl pandas wordcloud matplotlib nltk textblob
+
+    - name: Extract information
+      run: scrapy crawl discursospider
+
+    - name: NLP
+      run: analisis_sentimientos.py 
+
+    - name: Generate images
+      run: |
+        python3 nube_de_palabras.py
+        python3 graficos_sentimientos.py
